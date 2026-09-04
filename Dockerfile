@@ -43,4 +43,9 @@ ENV PORT=8000
 EXPOSE 8000
 
 # Shell form so $PORT is expanded at container start (Koyeb sets it dynamically).
-CMD uvicorn app:app --host 0.0.0.0 --port ${PORT}
+# --ws websockets forces the WebSocket driver explicitly instead of relying on
+# uvicorn's "auto" extras-detection, which can silently pick "none" on some
+# minimal build environments — that would make the live terminal's WebSocket
+# reject the upgrade instantly (everything else over plain HTTP still works,
+# which is exactly the "page loads fine, terminal stuck on Disconnected" symptom).
+CMD uvicorn app:app --host 0.0.0.0 --port ${PORT} --ws websockets
